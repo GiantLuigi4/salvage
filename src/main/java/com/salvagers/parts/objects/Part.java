@@ -1,6 +1,8 @@
 package com.salvagers.parts.objects;
 
-public class Part {
+import com.salvagers.client.utils.rendering.matrix.MatrixStack;
+
+public abstract class Part {
     public float weight;
     public float friction;
     public float size;
@@ -10,4 +12,6 @@ public class Part {
         this.friction = friction;
         this.size = size;
     }
+    
+    public abstract void render(MatrixStack stack);
 }

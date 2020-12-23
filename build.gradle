@@ -14,6 +14,7 @@ repositories {
 
 project.ext.lwjglVersion = "3.2.4-SNAPSHOT"
 project.ext.lwjglNatives = "natives-windows"
+project.ext.jomlVersion = "1.9.25"
 project.ext.gdxVersion = '1.9.12'
 
 dependencies {
@@ -39,4 +40,5 @@ dependencies {
     runtimeOnly "org.lwjgl:lwjgl-openvr::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-ovr::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-shaderc::$lwjglNatives"
+    implementation "org.joml:joml:${jomlVersion}"
 }
