@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group 'com.salvagers'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    // https://mvnrepository.com/artifact/org.lwjgl/lwjgl
+    compile group: 'org.lwjgl', name: 'lwjgl', version: '3.1.0'
+    // https://mvnrepository.com/artifact/org.lwjgl/lwjgl-opengl
+    compile group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.2.3'
+    // https://mvnrepository.com/artifact/org.lwjgl/lwjgl-openal
+    compile group: 'org.lwjgl', name: 'lwjgl-openal', version: '3.2.3'
+
+}
