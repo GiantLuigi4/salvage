@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+//    id 'com.stehno.natives' version '0.3.1'
 }
 
 group 'com.salvagers'
@@ -7,18 +8,34 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url 'https://jitpack.io' }
 }
+
+project.ext.lwjglVersion = "3.2.4-SNAPSHOT"
+project.ext.lwjglNatives = "natives-windows"
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
-    // https://mvnrepository.com/artifact/org.lwjgl/lwjgl
-    compile group: 'org.lwjgl', name: 'lwjgl', version: '3.1.0'
-    // https://mvnrepository.com/artifact/org.lwjgl/lwjgl-opengl
-    compile group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.2.3'
-    // https://mvnrepository.com/artifact/org.lwjgl/lwjgl-openal
-    compile group: 'org.lwjgl', name: 'lwjgl-openal', version: '3.2.3'
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-    // https://mvnrepository.com/artifact/cz.advel.jbullet/jbullet
-    compile group: 'cz.advel.jbullet', name: 'jbullet', version: '20101010-1'
+    implementation "org.lwjgl:lwjgl"
+    implementation "org.lwjgl:lwjgl-bullet"
+    implementation "org.lwjgl:lwjgl-glfw"
+    implementation "org.lwjgl:lwjgl-meshoptimizer"
+    implementation "org.lwjgl:lwjgl-openal"
+    implementation "org.lwjgl:lwjgl-opengl"
+    implementation "org.lwjgl:lwjgl-openvr"
+    implementation "org.lwjgl:lwjgl-ovr"
+    implementation "org.lwjgl:lwjgl-shaderc"
+    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-bullet::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-meshoptimizer::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-openvr::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-ovr::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-shaderc::$lwjglNatives"
 }
