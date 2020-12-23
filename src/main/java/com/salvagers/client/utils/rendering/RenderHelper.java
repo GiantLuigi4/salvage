@@ -13,17 +13,6 @@ import static org.lwjgl.opengl.GL11.*;
 public class RenderHelper {
 	public static void draw(Renderable renderable) {
 		glPushMatrix();
-//		for (MatrixEntry entry : renderable.entry.previous) {
-//			glTranslated(entry.x, -entry.y, entry.z);
-//			glRotated(entry.angle, entry.rotX, entry.rotY, entry.rotZ);
-//			glScaled(entry.scaleX, entry.scaleY, entry.scaleZ);
-//		}
-//		{
-//			MatrixEntry entry = renderable.entry;
-//			glTranslated(entry.x, -entry.y, entry.z);
-//			glRotated(entry.angle, entry.rotX, entry.rotY, entry.rotZ);
-//			glScaled(entry.scaleX, entry.scaleY, entry.scaleZ);
-//		}
 		glLoadMatrixf(Window.viewMatrix.mul(renderable.entry, Window.modelViewMatrix).get(fb));
 		
 		glEnable(GL_CULL_FACE);

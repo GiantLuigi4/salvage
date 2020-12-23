@@ -1,18 +1,22 @@
 package com.salvagers.client;
 
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
 import com.salvagers.client.utils.rendering.RenderHelper;
 import com.salvagers.client.utils.rendering.matrix.MatrixStack;
 import com.salvagers.client.utils.rendering.renderables.RenderableLine;
 import com.salvagers.client.utils.rendering.renderables.RenderableRectangle;
 import com.salvagers.common.Vector3D;
+import com.salvagers.parts.objects.Wheel;
+import com.salvagers.world.World;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -26,11 +30,30 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window {
 	private static long window;
 	
+	public static boolean focus = false;
+	
+	//TODO: switch this to lwjgl's cursor stuff
+	private static final Robot r;
+	
+	public static final World world = new World();
+	
+	static {
+		Robot placeholder = null;
+		try {
+			placeholder = new Robot();
+		} catch (Throwable ignored) {
+		}
+		r = placeholder;
+	}
+	
 	public static Matrix4f projMatrix = new Matrix4f();
 	public static Matrix4f viewMatrix = new Matrix4f();
 	public static Matrix4f modelMatrix = new Matrix4f();
 	public static Matrix4f modelViewMatrix = new Matrix4f();
 	public static FloatBuffer fb = BufferUtils.createFloatBuffer(16);
+	
+	public static float rotationX = 0;
+	public static float rotationY = 0;
 	
 	public static void main(String[] args) {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -115,81 +138,116 @@ public class Window {
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(projMatrix.get(fb));
 		
-		viewMatrix.setLookAt(0.0f, 0.0f, 10.0f,
+		viewMatrix.setLookAt(0.0f, 0.0f, 1.0f,
 				0.0f, 0.0f, 0.0f,
-				0.0f, 1, 0.0f);
-		viewMatrix.translate(0,0,0);
-		viewMatrix.rotate((float) Math.toRadians(0),1,0,0);
+				0.0f, 1.0f, 0.0f);
+//		viewMatrix.translate(0,0,0);
+//		viewMatrix.rotate((float) Math.toRadians(0),1,0,0);
 		glMatrixMode(GL_MODELVIEW);
 		
+		GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+		if (focus) {
+			double[] cursorX = new double[1];
+			double[] cursorY = new double[1];
+			glfwGetCursorPos(window,cursorX,cursorY);
+			rotationX += (cursorX[0]-(int)(width/2f))/128f;
+			rotationY += (cursorY[0]-(int)(height/2f))/128f;
+			
+			rotationY = Math.max(-90,Math.min(rotationY,90));
+			
+			int[] posX = new int[1];
+			int[] posY = new int[1];
+			glfwGetWindowPos(window,posX,posY);
+			r.mouseMove(posX[0]+width/2,posY[0]+height/2);
+			r.waitForIdle();
+		}
+		
+		stack.rotate(rotationY,1,0,0);
 		stack.translate(0,-5,0);
-		stack.rotate(rotation,0,1,0);
-		stack.translate(-0.5f,0,0);
-		stack.rotate(0,1,0,0);
-//		stack.translate(2,0,0);
-//		stack.scale(0.01f,0.01f,0.01f);
+		stack.rotate(rotationX,0,1,0);
 	}
 	
-	//Keep this for loading icon thing
 	public static void render(float rotation, MatrixStack stack) {
-		for (int x = -16; x <= 16; x++) {
-			for (int z = -16; z <= 16; z++) {
-//				modelMatrix.translation(0,0,0).rotateY(0);
-				stack.push();
-				stack.translate(x / 1f, 0, z / 1f);
-				
-				RenderableRectangle renderableRectangle = new RenderableRectangle(stack.getLast(),
-						new Vector3D(1, 0, 0),
-						new Vector3D(0, 0, 0),
-						new Vector3D(0, 1, 0),
-						new Vector3D(1, 1, 0)
-				);
-				RenderHelper.drawColor(renderableRectangle,(Math.abs(z)%17)/17f,(Math.abs(x)%17)/17f,(Math.abs(x+z)%17)/17f,1);
-
-				renderableRectangle = new RenderableRectangle(stack.getLast(),
-						new Vector3D(0, 0, 0),
-						new Vector3D(0, 0, 1),
-						new Vector3D(0, 1, 1),
-						new Vector3D(0, 1, 0)
-				);
-				RenderHelper.draw(renderableRectangle);
-
-				renderableRectangle = new RenderableRectangle(stack.getLast(),
-						new Vector3D(1, 0, 1),
-						new Vector3D(1, 0, 0),
-						new Vector3D(1, 1, 0),
-						new Vector3D(1, 1, 1)
-				);
-				RenderHelper.draw(renderableRectangle);
-
-				renderableRectangle = new RenderableRectangle(stack.getLast(),
-						new Vector3D(0, 0, 1),
-						new Vector3D(1, 0, 1),
-						new Vector3D(1, 1, 1),
-						new Vector3D(0, 1, 1)
-				);
-				RenderHelper.draw(renderableRectangle);
-
-				renderableRectangle = new RenderableRectangle(stack.getLast(),
-						new Vector3D(1, 1, 0),
-						new Vector3D(0, 1, 0),
-						new Vector3D(0, 1, 1),
-						new Vector3D(1, 1, 1)
-				);
-				RenderHelper.draw(renderableRectangle);
-
-				renderableRectangle = new RenderableRectangle(stack.getLast(),
-						new Vector3D(0, 0, 0),
-						new Vector3D(1, 0, 0),
-						new Vector3D(1, 0, 1),
-						new Vector3D(0, 0, 1)
-				);
-				RenderHelper.draw(renderableRectangle);
-				
-				glLoadMatrixf(viewMatrix.mul(modelMatrix, modelViewMatrix).get(fb));
-				stack.pop();
-			}
-		}
+		//Keep this for loading icon thing
+//		for (int x = -16; x <= 16; x++) {
+//			for (int z = -16; z <= 16; z++) {
+//				stack.push();
+//				stack.translate(x / 1f, 0, z / 1f);
+//
+//				RenderableRectangle renderableRectangle = new RenderableRectangle(stack.getLast(),
+//						new Vector3D(1, 0, 0),
+//						new Vector3D(0, 0, 0),
+//						new Vector3D(0, 1, 0),
+//						new Vector3D(1, 1, 0)
+//				);
+//				RenderHelper.drawColor(renderableRectangle,(Math.abs(z)%17)/17f,(Math.abs(x)%17)/17f,(Math.abs(x+z)%17)/17f,1);
+//
+//				renderableRectangle = new RenderableRectangle(stack.getLast(),
+//						new Vector3D(0, 0, 0),
+//						new Vector3D(0, 0, 1),
+//						new Vector3D(0, 1, 1),
+//						new Vector3D(0, 1, 0)
+//				);
+//				RenderHelper.draw(renderableRectangle);
+//
+//				renderableRectangle = new RenderableRectangle(stack.getLast(),
+//						new Vector3D(1, 0, 1),
+//						new Vector3D(1, 0, 0),
+//						new Vector3D(1, 1, 0),
+//						new Vector3D(1, 1, 1)
+//				);
+//				RenderHelper.draw(renderableRectangle);
+//
+//				renderableRectangle = new RenderableRectangle(stack.getLast(),
+//						new Vector3D(0, 0, 1),
+//						new Vector3D(1, 0, 1),
+//						new Vector3D(1, 1, 1),
+//						new Vector3D(0, 1, 1)
+//				);
+//				RenderHelper.draw(renderableRectangle);
+//
+//				renderableRectangle = new RenderableRectangle(stack.getLast(),
+//						new Vector3D(1, 1, 0),
+//						new Vector3D(0, 1, 0),
+//						new Vector3D(0, 1, 1),
+//						new Vector3D(1, 1, 1)
+//				);
+//				RenderHelper.draw(renderableRectangle);
+//
+//				renderableRectangle = new RenderableRectangle(stack.getLast(),
+//						new Vector3D(0, 0, 0),
+//						new Vector3D(1, 0, 0),
+//						new Vector3D(1, 0, 1),
+//						new Vector3D(0, 0, 1)
+//				);
+//				RenderHelper.draw(renderableRectangle);
+//
+//				glLoadMatrixf(viewMatrix.mul(modelMatrix, modelViewMatrix).get(fb));
+//				stack.pop();
+//			}
+//		}
+		
+//		Wheel wheel = new Wheel(1,1,3);
+//		stack.translate(10,0,0);
+//		wheel.render(stack);
+		
+		world.parts.forEach(part->{
+			stack.push();
+			Vector3 pos = new Vector3(0,0,0);
+			Vector3 scale = new Vector3(0,0,0);
+			Quaternion rotationQT = new Quaternion(0,0,0,0);
+			part.body.getWorldTransform().getTranslation(pos);
+			part.body.getWorldTransform().getRotation(rotationQT);
+			part.body.getWorldTransform().getScale(scale);
+			stack.translate(pos.x,pos.y,pos.z);
+			stack.translate(part.body.getVelocityInLocalPoint(new Vector3()).x,part.body.getVelocityInLocalPoint(new Vector3()).y,part.body.getVelocityInLocalPoint(new Vector3()).z);
+			stack.rotate(rotationQT);
+			stack.scale(scale.x,scale.y,scale.z);
+			part.render(stack);
+			stack.pop();
+		});
+		world.tick();
 	}
 	
 	public static void clone(String resourceName) throws IOException {
@@ -219,6 +277,12 @@ public class Window {
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true);
+		});
+		glfwSetWindowFocusCallback(window, new GLFWWindowFocusCallback() {
+			@Override
+			public void invoke(long window, boolean focused) {
+				focus = focused;
+			}
 		});
 		
 		try ( MemoryStack stack = stackPush() ) {

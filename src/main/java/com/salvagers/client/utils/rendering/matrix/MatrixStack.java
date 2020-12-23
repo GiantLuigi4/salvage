@@ -1,6 +1,8 @@
 package com.salvagers.client.utils.rendering.matrix;
 
+import com.badlogic.gdx.math.Quaternion;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import java.util.ArrayList;
 
@@ -24,6 +26,16 @@ public class MatrixStack {
 	public void rotate(double angle, double x, double y, double z) {
 //		entries.add(new MatrixEntry(0, 0, 0, angle, x, y, z, 1, 1, 1));
 		current.rotate((float)Math.toRadians(angle),(float)x,(float)y,(float)z);
+	}
+	
+	public void rotate(Quaternion qt) {
+//		entries.add(new MatrixEntry(0, 0, 0, angle, x, y, z, 1, 1, 1));
+		current.rotate(new Quaternionf(qt.x,qt.y,qt.z,qt.w));
+	}
+	
+	public void rotate(Quaternionf qt) {
+//		entries.add(new MatrixEntry(0, 0, 0, angle, x, y, z, 1, 1, 1));
+		current.rotate(qt);
 	}
 	
 	public void push() {
