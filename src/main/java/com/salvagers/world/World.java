@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
+import com.badlogic.gdx.physics.bullet.dynamics.btSimpleDynamicsWorld;
 import com.badlogic.gdx.utils.Array;
 import com.salvagers.parts.objects.Part;
 
@@ -20,7 +21,7 @@ public class World
     public btCollisionDispatcher dispatcher = new btCollisionDispatcher(collisionConfig);
     public btDbvtBroadphase broadphase = new btDbvtBroadphase();
     public btSequentialImpulseConstraintSolver constraintSolver = new btSequentialImpulseConstraintSolver();
-    public btDynamicsWorld collisionWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, constraintSolver, collisionConfig);
+    public btDynamicsWorld collisionWorld = new btSimpleDynamicsWorld(dispatcher, broadphase, constraintSolver, collisionConfig);
     public WorldContactListener listener = new WorldContactListener();
     
     static
@@ -45,20 +46,18 @@ public class World
             obj.body.activate();
             obj.body.setContactCallbackFlag(1);
             obj.body.setContactCallbackFilter(1);
-            obj.body.clearForces();
-            obj.body.applyForce(new Vector3(0,-3f,0),new Vector3());
             if (checkCollision(obj.body, parts.get(0).body)) {
             }
         }
     
-        collisionWorld.setGravity(new Vector3(0,1,0));
+        collisionWorld.setGravity(new Vector3(0,-1,0));
 
-        Vector3 pos = new Vector3();
-        collisionWorld.getCollisionObjectArray().atConst(0).getWorldTransform().getTranslation(pos);
-        Matrix4 transform = collisionWorld.getCollisionObjectArray().atConst(0).getWorldTransform();
-        transform.setTranslation(0,0.001f,0);
-        collisionWorld.getCollisionObjectArray().atConst(0).setWorldTransform(transform);
-        System.out.println(pos);
+//        Vector3 pos = new Vector3();
+//        collisionWorld.getCollisionObjectArray().atConst(0).getWorldTransform().getTranslation(pos);
+//        Matrix4 transform = collisionWorld.getCollisionObjectArray().atConst(0).getWorldTransform();
+//        transform.setTranslation(0,0.001f,0);
+//        collisionWorld.getCollisionObjectArray().atConst(0).setWorldTransform(transform);
+//        System.out.println(pos);
         float delta = 1f / 30f;
         collisionWorld.stepSimulation(delta, 5, 1f/60f);
 //        collisionWorld.performDiscreteCollisionDetection();
