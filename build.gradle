@@ -19,4 +19,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.lwjgl/lwjgl-openal
     compile group: 'org.lwjgl', name: 'lwjgl-openal', version: '3.2.3'
 
+    // https://mvnrepository.com/artifact/cz.advel.jbullet/jbullet
+    compile group: 'cz.advel.jbullet', name: 'jbullet', version: '20101010-1'
 }
