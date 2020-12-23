@@ -1,4 +1,11 @@
 package com.salvagers.world;
 
-public class World {
+import com.badlogic.gdx.physics.bullet.Bullet;
+
+public class World
+{
+    static
+    {
+        Bullet.init();
+    }
 }
