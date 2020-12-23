@@ -23,8 +23,11 @@ dependencies {
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
     implementation "org.lwjgl:lwjgl"
-    implementation "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
+//    implementation "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+//    implementation "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
+
+    implementation 'com.github.kovertopz:jReactPhysics3D:6ce8642536'
+
     implementation "org.lwjgl:lwjgl-glfw"
     implementation "org.lwjgl:lwjgl-meshoptimizer"
     implementation "org.lwjgl:lwjgl-openal"

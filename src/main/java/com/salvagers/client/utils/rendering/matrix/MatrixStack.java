@@ -1,6 +1,6 @@
 package com.salvagers.client.utils.rendering.matrix;
 
-import com.badlogic.gdx.math.Quaternion;
+import net.smert.jreactphysics3d.mathematics.Quaternion;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -30,7 +30,14 @@ public class MatrixStack {
 	
 	public void rotate(Quaternion qt) {
 //		entries.add(new MatrixEntry(0, 0, 0, angle, x, y, z, 1, 1, 1));
-		current.rotate(new Quaternionf(qt.x,qt.y,qt.z,qt.w));
+		if (Float.isNaN(qt.getX()))
+			return;
+		current.rotate(new Quaternionf(
+				(qt.getX()),
+				(qt.getY()),
+				(qt.getZ()),
+				(qt.getW())
+		));
 	}
 	
 	public void rotate(Quaternionf qt) {

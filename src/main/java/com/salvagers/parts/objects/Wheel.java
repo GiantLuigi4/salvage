@@ -8,8 +8,8 @@ import com.salvagers.common.Vector3D;
 public class Wheel extends Part {
     public Wheel(float weight, float friction, float size) {
         super(weight, friction, size);
-        this.body = Shapes.getCollider(
-                "cylinder",1,2,2,1
+        this.body = Shapes.getShape(
+                "cylinder"
         );
     }
     
@@ -43,10 +43,5 @@ public class Wheel extends Part {
             );
             RenderHelper.drawColor(line, i / 36f, i / 36f, i / 36f, 1);
         }
-    }
-    
-    @Override
-    public void dispose() {
-        body.dispose();
     }
 }

@@ -1,14 +1,9 @@
 package com.salvagers.client;
 
-import com.badlogic.gdx.math.Quaternion;
-import com.badlogic.gdx.math.Vector3;
-import com.salvagers.client.utils.rendering.RenderHelper;
 import com.salvagers.client.utils.rendering.matrix.MatrixStack;
-import com.salvagers.client.utils.rendering.renderables.RenderableLine;
-import com.salvagers.client.utils.rendering.renderables.RenderableRectangle;
-import com.salvagers.common.Vector3D;
-import com.salvagers.parts.objects.Wheel;
 import com.salvagers.world.World;
+import net.smert.jreactphysics3d.mathematics.Quaternion;
+import net.smert.jreactphysics3d.mathematics.Vector3;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
@@ -234,16 +229,14 @@ public class Window {
 		
 		world.parts.forEach(part->{
 			stack.push();
-			Vector3 pos = new Vector3(0,0,0);
-			Vector3 scale = new Vector3(0,0,0);
-			Quaternion rotationQT = new Quaternion(0,0,0,0);
-			part.body.getWorldTransform().getTranslation(pos);
-			part.body.getWorldTransform().getRotation(rotationQT);
-			part.body.getWorldTransform().getScale(scale);
-			stack.translate(pos.x,pos.y,pos.z);
-			stack.translate(part.body.getVelocityInLocalPoint(new Vector3()).x,part.body.getVelocityInLocalPoint(new Vector3()).y,part.body.getVelocityInLocalPoint(new Vector3()).z);
-			stack.rotate(rotationQT);
-			stack.scale(scale.x,scale.y,scale.z);
+			Vector3 pos = part.collisionBody.getTransform().getPosition();
+			Quaternion rotationQT = part.collisionBody.getTransform().getOrientation();
+			System.out.println(pos);
+//			pos.set(0,0,0);
+			stack.translate(pos.getX(),pos.getY(),pos.getZ());
+			if (rotationQT != null) {
+				stack.rotate(rotationQT);
+			}
 			part.render(stack);
 			stack.pop();
 		});
