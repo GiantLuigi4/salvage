@@ -3,8 +3,11 @@ package com.salvagers.client;
 import com.salvagers.client.utils.rendering.matrix.MatrixStack;
 import com.salvagers.world.World;
 import net.smert.jreactphysics3d.mathematics.Quaternion;
+import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.*;
@@ -15,6 +18,7 @@ import java.awt.*;
 import java.io.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -23,9 +27,11 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
+	public static final ArrayList<Integer> keysDown = new ArrayList<>();
+	
 	private static long window;
 	
-	public static boolean focus = false;
+	public static boolean focus = true;
 	
 	//TODO: switch this to lwjgl's cursor stuff
 	private static final Robot r;
@@ -49,6 +55,8 @@ public class Window {
 	
 	public static float rotationX = 0;
 	public static float rotationY = 0;
+	
+	public static Vector3 camPos = new Vector3();
 	
 	public static void main(String[] args) {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -227,12 +235,34 @@ public class Window {
 //		stack.translate(10,0,0);
 //		wheel.render(stack);
 		
+		if (keysDown.contains(GLFW_KEY_W)) {
+			camPos.add(new Vector3((float) Math.sin(Math.toRadians(rotationX+180)), 0,(float) -Math.cos(Math.toRadians(rotationX+180))));
+		}
+		if (keysDown.contains(GLFW_KEY_S)) {
+			camPos.subtract(new Vector3((float) Math.sin(Math.toRadians(rotationX+180)), 0,(float) -Math.cos(Math.toRadians(rotationX+180))));
+		}
+		if (keysDown.contains(GLFW_KEY_D)) {
+			camPos.add(new Vector3((float) Math.sin(Math.toRadians(rotationX+180+90)), 0,(float) -Math.cos(Math.toRadians(rotationX+180+90))));
+		}
+		if (keysDown.contains(GLFW_KEY_A)) {
+			camPos.add(new Vector3((float) Math.sin(Math.toRadians(rotationX+180-90)), 0,(float) -Math.cos(Math.toRadians(rotationX+180-90))));
+		}
+		if (keysDown.contains(GLFW_KEY_Q)) {
+			camPos.subtract(new Vector3(0,-1,0));
+		}
+		if (keysDown.contains(GLFW_KEY_E)) {
+			camPos.subtract(new Vector3(0,1,0));
+		}
+		
+		stack.translate(camPos.getX(),camPos.getY(),camPos.getZ());
+		
 		world.parts.forEach(part->{
 			stack.push();
-			Vector3 pos = part.collisionBody.getTransform().getPosition();
-			Quaternion rotationQT = part.collisionBody.getTransform().getOrientation();
-			System.out.println(pos);
-//			pos.set(0,0,0);
+//			Transform transform = part.collisionBody.getInterpolatedTransform(part.lastTransform);
+			Transform transform = part.collisionBody.getTransform();
+			Vector3 pos = transform.getPosition();
+			Quaternion rotationQT = transform.getOrientation();
+//			System.out.println(pos);
 			stack.translate(pos.getX(),pos.getY(),pos.getZ());
 			if (rotationQT != null) {
 				stack.rotate(rotationQT);
@@ -270,6 +300,12 @@ public class Window {
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true);
+//			if ( key == GLFW_KEY_W )
+			if (action == GLFW_PRESS) {
+				keysDown.add(key);
+			} else if (action == GLFW_RELEASE) {
+				keysDown.remove((Object)key);
+			}
 		});
 		glfwSetWindowFocusCallback(window, new GLFWWindowFocusCallback() {
 			@Override
