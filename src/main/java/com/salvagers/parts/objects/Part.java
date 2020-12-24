@@ -4,15 +4,18 @@ import com.salvagers.client.utils.rendering.matrix.MatrixStack;
 import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 
+import net.smert.jreactphysics3d.mathematics.Quaternion;
 import net.smert.jreactphysics3d.mathematics.Transform;
+import net.smert.jreactphysics3d.mathematics.Vector3;
 
 public abstract class Part {
     public float weight;
     public float friction;
     public float size;
     public CollisionShape body = null;
-    public Transform lastTransform = new Transform();
-    public boolean isMoving = false;
+    public Vector3 lastPosition = new Vector3(0,0,0);
+    public Quaternion lastRotation = new Quaternion(0,0,0,0);
+    public float lastRefresh = 0;
     public CollisionBody collisionBody;
     
     public Part(float weight, float friction, float size) {

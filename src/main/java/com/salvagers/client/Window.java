@@ -109,7 +109,7 @@ public class Window {
 	public static void loop() {
 		GL.createCapabilities();
 		
-		glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		
 		int rotation = 0;
 		
@@ -154,8 +154,8 @@ public class Window {
 			double[] cursorX = new double[1];
 			double[] cursorY = new double[1];
 			glfwGetCursorPos(window,cursorX,cursorY);
-			rotationX += (cursorX[0]-(int)(width/2f))/128f;
-			rotationY += (cursorY[0]-(int)(height/2f))/128f;
+			rotationX += (cursorX[0]-(int)(width/2f))/16f;
+			rotationY += (cursorY[0]-(int)(height/2f))/16f;
 			
 			rotationY = Math.max(-90,Math.min(rotationY,90));
 			
@@ -258,17 +258,20 @@ public class Window {
 		
 		world.parts.forEach(part->{
 			stack.push();
-//			Transform transform = part.collisionBody.getInterpolatedTransform(part.lastTransform);
 			Transform transform = part.collisionBody.getTransform();
-			Vector3 pos = transform.getPosition();
-			Quaternion rotationQT = transform.getOrientation();
-//			System.out.println(pos);
+			float interpRate = part.lastRefresh-(int)part.lastRefresh;
+			Vector3 pos = new Vector3();
+			Vector3.Lerp(part.lastPosition,transform.getPosition(),interpRate,pos);
+			Quaternion rotationQT = new Quaternion(0,0,0,1f);
+			Quaternion.Slerp(part.lastRotation,transform.getOrientation(),interpRate,rotationQT);
 			stack.translate(pos.getX(),pos.getY(),pos.getZ());
 			if (rotationQT != null) {
 				stack.rotate(rotationQT);
 			}
 			part.render(stack);
 			stack.pop();
+//			part.lastPosition = pos;
+//			part.lastRotation = rotationQT;
 		});
 		world.tick();
 	}

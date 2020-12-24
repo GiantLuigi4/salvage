@@ -21,12 +21,18 @@ public class World
     
     public World() {
         world.start();
-        addPart(new Wheel(1,1,1));
-        for (int x=-8;x<8;x++) {
+        addPart(new Wheel(1, 1, 1));
+        for (int x = -8; x < 8; x++) {
+//        for (int x = -0; x < 1; x++) {
             for (int z = -8; z < 8; z++) {
+//            for (int z = -0; z < 1; z++) {
                 CollisionBody cube = addPart(new BlockPart(1, 1, 1)).collisionBody;
                 cube.setIsMotionEnabled(false);
-                cube.getTransform().getPosition().set(new Vector3(x, -20, z));
+                if (z >=0) {
+                    cube.getTransform().getPosition().set(new Vector3(x, -20, z));
+                } else {
+                    cube.getTransform().getPosition().set(new Vector3(x, -19, z));
+                }
             }
         }
     }
@@ -46,10 +52,12 @@ public class World
     
     public void tick() {
         for (Part part : parts) {
-            part.lastTransform = new Transform(part.collisionBody.getTransform());
+            if ((int)part.lastRefresh != (int)world.getPhysicsTime()) {
+                part.lastPosition = part.collisionBody.getTransform().getPosition();
+                part.lastRotation = part.collisionBody.getTransform().getOrientation();
+            }
+            part.lastRefresh = world.getPhysicsTime();
         }
-//        if (world.getTimeBeforeSleep() == 1) {
-//        }
         world.update();
     }
 }
