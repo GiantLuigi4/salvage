@@ -47,6 +47,8 @@ public class Window {
 		r = placeholder;
 	}
 	
+	public static Config configs = Config.parse();
+	
 	public static Matrix4f projMatrix = new Matrix4f();
 	public static Matrix4f viewMatrix = new Matrix4f();
 	public static Matrix4f modelMatrix = new Matrix4f();
@@ -154,8 +156,10 @@ public class Window {
 			double[] cursorX = new double[1];
 			double[] cursorY = new double[1];
 			glfwGetCursorPos(window,cursorX,cursorY);
-			rotationX += (cursorX[0]-(int)(width/2f))/16f;
-			rotationY += (cursorY[0]-(int)(height/2f))/16f;
+			rotationX += ((cursorX[0]-(int)(width/2f))/(256f-configs.sensitivityX));
+			rotationY += ((cursorY[0]-(int)(height/2f))/(256f-configs.sensitivityY));
+			
+			System.out.println(configs.sensitivityX);
 			
 			rotationY = Math.max(-90,Math.min(rotationY,90));
 			
