@@ -4,7 +4,6 @@ import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.dynamics.RigidBody;
 import com.salvagers.client.utils.rendering.matrix.MatrixStack;
 
-import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 public abstract class Part {
@@ -12,8 +11,6 @@ public abstract class Part {
     public float friction;
     public float size;
     public CollisionShape body = null;
-    public Vector3f lastPosition = new Vector3f(0,0,0);
-    public Quat4f lastRotation = new Quat4f(0,0,0,0);
     public float lastRefresh = 0;
     public RigidBody collisionBody;
     public Vector3f pos = new Vector3f();

@@ -13,6 +13,12 @@ import java.util.ArrayList;
 public class Wheel extends Part {
     private final Renderable[] renderables;
     
+    /**
+     * Constructs a wheel
+     * @param weight the weight of the wheel (0 for if it should be immovable)
+     * @param friction the friction of the wheel
+     * @param size the size of the wheel (NYI)
+     */
     public Wheel(float weight, float friction, float size) {
         super(weight, friction, size);
         this.body = Shapes.getCylinder(1,0.2f);
@@ -21,11 +27,13 @@ public class Wheel extends Part {
         
         MatrixStack stack = new MatrixStack();
         float interval = 360f / 36f;
+        //Makes the wheel shape for rendering
         for (int i = 0; i < 36; i++) {
             double sin = Math.sin((Math.toRadians(i + 1)) * interval);
             double cos = Math.cos((Math.toRadians(i + 1)) * interval);
             double cos1 = Math.cos(Math.toRadians(i) * interval);
             double sin1 = Math.sin(Math.toRadians(i) * interval);
+            //Creates the shape of the wheel's rubber
             RenderableRectangle line = new TexturedRectangle(stack.getLast(),
                     new Vector3D(cos, sin, 0.1f),
                     new Vector3D(cos1, sin1, 0.1f),

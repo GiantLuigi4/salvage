@@ -14,6 +14,7 @@ public class BlockPart extends Part {
 	private static final Renderable[] renderables;
 	
 	static {
+		//Makes the block shape for rendering
 		MatrixStack stack = new MatrixStack();
 		ArrayList<Renderable> renderablesArrayList = new ArrayList<>();
 		RenderableRectangle renderableRectangle = new TexturedRectangle(stack.getLast(),

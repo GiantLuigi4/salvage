@@ -237,24 +237,18 @@ public class Window {
 //		stack.translate(10,0,0);
 //		wheel.render(stack);
 		
-		if (keysDown.contains(GLFW_KEY_W)) {
+		if (keysDown.contains(GLFW_KEY_W))
 			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180)), 0,(float) -Math.cos(Math.toRadians(rotationX+180))));
-		}
-		if (keysDown.contains(GLFW_KEY_S)) {
+		if (keysDown.contains(GLFW_KEY_S))
 			camPos.sub(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180)), 0,(float) -Math.cos(Math.toRadians(rotationX+180))));
-		}
-		if (keysDown.contains(GLFW_KEY_D)) {
+		if (keysDown.contains(GLFW_KEY_D))
 			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180+90)), 0,(float) -Math.cos(Math.toRadians(rotationX+180+90))));
-		}
-		if (keysDown.contains(GLFW_KEY_A)) {
+		if (keysDown.contains(GLFW_KEY_A))
 			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180-90)), 0,(float) -Math.cos(Math.toRadians(rotationX+180-90))));
-		}
-		if (keysDown.contains(GLFW_KEY_Q)) {
+		if (keysDown.contains(GLFW_KEY_SPACE))
 			camPos.sub(new Vector3f(0,-1,0));
-		}
-		if (keysDown.contains(GLFW_KEY_E)) {
+		if (keysDown.contains(GLFW_KEY_C))
 			camPos.sub(new Vector3f(0,1,0));
-		}
 		
 //		stack.translate(camPos.getX(),camPos.getY(),camPos.getZ());
 		

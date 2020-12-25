@@ -51,6 +51,11 @@ public class World
         }
     }
     
+    /**
+     * adds a part to the world
+     * @param part the part to add
+     * @return the input (as a way to simplify stuff)
+     */
     public Part addPart(Part part) {
         parts.add(part);
         

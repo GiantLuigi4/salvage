@@ -1,6 +1,5 @@
 package com.salvagers.client.utils.rendering.renderables;
 
-import com.salvagers.client.utils.rendering.matrix.MatrixEntry;
 import com.salvagers.common.Vector3D;
 import org.joml.Matrix4f;
 

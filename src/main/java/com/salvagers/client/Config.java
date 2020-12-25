@@ -6,8 +6,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 public class Config {
-	public float sensitivityX = (256-240);
-	public float sensitivityY = (256-240);
+	public float sensitivityX = 32;
+	public float sensitivityY = 32;
 	
 	public static Config parse() {
 		Config cfg = new Config();
