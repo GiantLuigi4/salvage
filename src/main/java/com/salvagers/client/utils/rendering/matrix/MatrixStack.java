@@ -1,9 +1,9 @@
 package com.salvagers.client.utils.rendering.matrix;
 
-import net.smert.jreactphysics3d.mathematics.Quaternion;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
+import javax.vecmath.Quat4f;
 import java.util.ArrayList;
 
 public class MatrixStack {
@@ -28,15 +28,15 @@ public class MatrixStack {
 		current.rotate((float)Math.toRadians(angle),(float)x,(float)y,(float)z);
 	}
 	
-	public void rotate(Quaternion qt) {
+	public void rotate(Quat4f qt) {
 //		entries.add(new MatrixEntry(0, 0, 0, angle, x, y, z, 1, 1, 1));
-		if (Float.isNaN(qt.getX()))
+		if (Float.isNaN(qt.x))
 			return;
 		current.rotate(new Quaternionf(
-				(qt.getX()),
-				(qt.getY()),
-				(qt.getZ()),
-				(qt.getW())
+				(qt.x),
+				(qt.y),
+				(qt.z),
+				(qt.w)
 		));
 	}
 	

@@ -1,22 +1,22 @@
 package com.salvagers.parts.objects;
 
+import com.bulletphysics.collision.shapes.CollisionShape;
+import com.bulletphysics.dynamics.RigidBody;
 import com.salvagers.client.utils.rendering.matrix.MatrixStack;
-import net.smert.jreactphysics3d.body.CollisionBody;
-import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 
-import net.smert.jreactphysics3d.mathematics.Quaternion;
-import net.smert.jreactphysics3d.mathematics.Transform;
-import net.smert.jreactphysics3d.mathematics.Vector3;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
 
 public abstract class Part {
     public float weight;
     public float friction;
     public float size;
     public CollisionShape body = null;
-    public Vector3 lastPosition = new Vector3(0,0,0);
-    public Quaternion lastRotation = new Quaternion(0,0,0,0);
+    public Vector3f lastPosition = new Vector3f(0,0,0);
+    public Quat4f lastRotation = new Quat4f(0,0,0,0);
     public float lastRefresh = 0;
-    public CollisionBody collisionBody;
+    public RigidBody collisionBody;
+    public Vector3f pos = new Vector3f();
     
     public Part(float weight, float friction, float size) {
         this.weight = weight;
@@ -25,4 +25,11 @@ public abstract class Part {
     }
     
     public abstract void render(MatrixStack stack);
+    
+    public Part setDefaultPos(double x, double y, double z) {
+        this.pos.x = (float)x;
+        this.pos.y = (float)y;
+        this.pos.z = (float)z;
+        return this;
+    }
 }

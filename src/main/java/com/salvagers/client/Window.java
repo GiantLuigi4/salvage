@@ -1,12 +1,9 @@
 package com.salvagers.client;
 
+import com.bulletphysics.linearmath.Transform;
 import com.salvagers.client.utils.rendering.matrix.MatrixStack;
 import com.salvagers.world.World;
-import net.smert.jreactphysics3d.mathematics.Quaternion;
-import net.smert.jreactphysics3d.mathematics.Transform;
-import net.smert.jreactphysics3d.mathematics.Vector3;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
@@ -14,6 +11,7 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
+import javax.vecmath.Quat4f;
 import java.awt.*;
 import java.io.*;
 import java.nio.FloatBuffer;
@@ -58,7 +56,7 @@ public class Window {
 	public static float rotationX = 0;
 	public static float rotationY = 0;
 	
-	public static Vector3 camPos = new Vector3();
+	public static Vector3f camPos = new Vector3f();
 	
 	public static void main(String[] args) {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -111,7 +109,7 @@ public class Window {
 	public static void loop() {
 		GL.createCapabilities();
 		
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(0.0f, 0.0f, 1, 0.0f);
 		
 		int rotation = 0;
 		
@@ -171,8 +169,8 @@ public class Window {
 		}
 		
 		stack.rotate(rotationY,1,0,0);
-		stack.translate(0,-5,0);
 		stack.rotate(rotationX,0,1,0);
+		stack.translate(camPos.x,camPos.y,camPos.z);
 	}
 	
 	public static void render(float rotation, MatrixStack stack) {
@@ -240,35 +238,36 @@ public class Window {
 //		wheel.render(stack);
 		
 		if (keysDown.contains(GLFW_KEY_W)) {
-			camPos.add(new Vector3((float) Math.sin(Math.toRadians(rotationX+180)), 0,(float) -Math.cos(Math.toRadians(rotationX+180))));
+			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180)), 0,(float) -Math.cos(Math.toRadians(rotationX+180))));
 		}
 		if (keysDown.contains(GLFW_KEY_S)) {
-			camPos.subtract(new Vector3((float) Math.sin(Math.toRadians(rotationX+180)), 0,(float) -Math.cos(Math.toRadians(rotationX+180))));
+			camPos.sub(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180)), 0,(float) -Math.cos(Math.toRadians(rotationX+180))));
 		}
 		if (keysDown.contains(GLFW_KEY_D)) {
-			camPos.add(new Vector3((float) Math.sin(Math.toRadians(rotationX+180+90)), 0,(float) -Math.cos(Math.toRadians(rotationX+180+90))));
+			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180+90)), 0,(float) -Math.cos(Math.toRadians(rotationX+180+90))));
 		}
 		if (keysDown.contains(GLFW_KEY_A)) {
-			camPos.add(new Vector3((float) Math.sin(Math.toRadians(rotationX+180-90)), 0,(float) -Math.cos(Math.toRadians(rotationX+180-90))));
+			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180-90)), 0,(float) -Math.cos(Math.toRadians(rotationX+180-90))));
 		}
 		if (keysDown.contains(GLFW_KEY_Q)) {
-			camPos.subtract(new Vector3(0,-1,0));
+			camPos.sub(new Vector3f(0,-1,0));
 		}
 		if (keysDown.contains(GLFW_KEY_E)) {
-			camPos.subtract(new Vector3(0,1,0));
+			camPos.sub(new Vector3f(0,1,0));
 		}
 		
-		stack.translate(camPos.getX(),camPos.getY(),camPos.getZ());
+//		stack.translate(camPos.getX(),camPos.getY(),camPos.getZ());
 		
 		world.parts.forEach(part->{
 			stack.push();
-			Transform transform = part.collisionBody.getTransform();
+			Transform transform = part.collisionBody.getWorldTransform(new com.bulletphysics.linearmath.Transform());
 			float interpRate = part.lastRefresh-(int)part.lastRefresh;
-			Vector3 pos = new Vector3();
-			Vector3.Lerp(part.lastPosition,transform.getPosition(),interpRate,pos);
-			Quaternion rotationQT = new Quaternion(0,0,0,1f);
-			Quaternion.Slerp(part.lastRotation,transform.getOrientation(),interpRate,rotationQT);
-			stack.translate(pos.getX(),pos.getY(),pos.getZ());
+//			javax.vecmath.Vector3f pos = new javax.vecmath.Vector3f();
+			javax.vecmath.Vector3f pos = transform.origin;
+//			transform.getMatrix(new javax.vecmath.Matrix4f()).transform(pos);
+			Quat4f rotationQT = transform.getRotation(new Quat4f());
+//			Quaternion.Slerp(part.lastRotation,transform.getOrientation(),interpRate,rotationQT);
+			stack.translate(pos.x,pos.y,pos.z);
 			if (rotationQT != null) {
 				stack.rotate(rotationQT);
 			}

@@ -1,38 +1,52 @@
 package com.salvagers.world;
 
+import com.bulletphysics.collision.broadphase.BroadphaseInterface;
+import com.bulletphysics.collision.broadphase.DbvtBroadphase;
+import com.bulletphysics.collision.dispatch.CollisionConfiguration;
+import com.bulletphysics.collision.dispatch.CollisionDispatcher;
+import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
+import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
+import com.bulletphysics.dynamics.RigidBody;
+import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
+import com.bulletphysics.dynamics.constraintsolver.ConstraintSolver;
+import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
+import com.bulletphysics.linearmath.DefaultMotionState;
+import com.bulletphysics.linearmath.MotionState;
+import com.bulletphysics.linearmath.Transform;
 import com.salvagers.parts.objects.BlockPart;
 import com.salvagers.parts.objects.Part;
 
 import com.salvagers.parts.objects.Wheel;
-import net.smert.jreactphysics3d.body.CollisionBody;
-import net.smert.jreactphysics3d.engine.DynamicsWorld;
-import net.smert.jreactphysics3d.mathematics.Matrix3x3;
-import net.smert.jreactphysics3d.mathematics.Quaternion;
-import net.smert.jreactphysics3d.mathematics.Transform;
-import net.smert.jreactphysics3d.mathematics.Vector3;
 
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 
+//https://github.com/OskarVeerhoek/YouTube-tutorials/blob/master/src/episode_39/JBulletDemo.java
 public class World
 {
     public ArrayList<Part> parts = new ArrayList<>();
     
-    DynamicsWorld world = new DynamicsWorld(new Vector3(0,-1,0),0.1f);
+    BroadphaseInterface broadphase = new DbvtBroadphase();
+    CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
+    CollisionDispatcher dispatcher = new CollisionDispatcher(collisionConfiguration);
+    ConstraintSolver solver = new SequentialImpulseConstraintSolver();
+    DiscreteDynamicsWorld dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
     
     public World() {
-        world.start();
         addPart(new Wheel(1, 1, 1));
-        for (int x = -8; x < 8; x++) {
-//        for (int x = -0; x < 1; x++) {
-            for (int z = -8; z < 8; z++) {
-//            for (int z = -0; z < 1; z++) {
-                CollisionBody cube = addPart(new BlockPart(1, 1, 1)).collisionBody;
-                cube.setIsMotionEnabled(false);
-                if (z >=0) {
-                    cube.getTransform().getPosition().set(new Vector3(x, -20, z));
+        dynamicsWorld.setGravity(new Vector3f(0, -10, 0));
+        int size = 4;
+        for (int x = -size; x <= size; x++) {
+            for (int z = -size; z <= size; z++) {
+                Part part = new BlockPart(0, 1, 1);
+                if (z>=0) {
+                    part.setDefaultPos(x,-20,z);
                 } else {
-                    cube.getTransform().getPosition().set(new Vector3(x, -19, z));
+                    part.setDefaultPos(x,-19,z);
                 }
+                addPart(part);
             }
         }
     }
@@ -40,24 +54,30 @@ public class World
     public Part addPart(Part part) {
         parts.add(part);
         
-        Matrix3x3 inertiaTensor = new Matrix3x3();
-        part.body.computeLocalInertiaTensor(inertiaTensor, part.weight);
-    
-        Quaternion initOrientation = new Quaternion().identity();
+        Vector3f inertia = new Vector3f(0, 0, 0);
+        part.body.calculateLocalInertia(part.weight, inertia);
         
-        part.collisionBody = world.createRigidBody(new Transform(new Vector3(0,0,0),initOrientation), part.weight, inertiaTensor, part.body);
-        part.collisionBody.setIsCollisionEnabled(true);
+        Transform startingTransform = new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(0, 35, 0), 1.0f));
+        MotionState motionState = new DefaultMotionState(new Transform(startingTransform));
+        RigidBodyConstructionInfo bodyConstructionInfo = new RigidBodyConstructionInfo(part.weight, motionState, part.body, inertia);
+        bodyConstructionInfo.angularDamping = 0.95f;
+        
+        part.collisionBody = new RigidBody(bodyConstructionInfo);
+        Transform transform = part.collisionBody.getMotionState().getWorldTransform(new Transform());
+        transform.setIdentity();
+        transform.origin.set(part.pos);
+        part.collisionBody.getMotionState().setWorldTransform(transform);
+        transform = part.collisionBody.getWorldTransform(new Transform());
+        transform.setIdentity();
+        transform.origin.set(part.pos);
+        part.collisionBody.setWorldTransform(transform);
+        
+        dynamicsWorld.addRigidBody(part.collisionBody);
+        part.collisionBody.activate();
         return part;
     }
     
     public void tick() {
-        for (Part part : parts) {
-            if ((int)part.lastRefresh != (int)world.getPhysicsTime()) {
-                part.lastPosition = part.collisionBody.getTransform().getPosition();
-                part.lastRotation = part.collisionBody.getTransform().getOrientation();
-            }
-            part.lastRefresh = world.getPhysicsTime();
-        }
-        world.update();
+        dynamicsWorld.stepSimulation(1 / 60.0f);
     }
 }
