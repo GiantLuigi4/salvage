@@ -13,7 +13,7 @@ import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSo
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
-import com.salvagers.parts.objects.BlockPart;
+import com.salvagers.parts.objects.Block;
 import com.salvagers.parts.objects.Part;
 
 import com.salvagers.parts.objects.Wheel;
@@ -40,7 +40,7 @@ public class World
         int size = 4;
         for (int x = -size; x <= size; x++) {
             for (int z = -size; z <= size; z++) {
-                Part part = new BlockPart(0, 1, 1);
+                Part part = new Block(0, 1, 1);
                 if (z>=0) {
                     part.setDefaultPos(x,-20,z);
                 } else {

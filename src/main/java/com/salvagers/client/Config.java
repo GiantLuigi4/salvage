@@ -11,7 +11,7 @@ public class Config {
 	
 	public static Config parse() {
 		Config cfg = new Config();
-		Properties properties = Properties.parse(cfg,"settings.properties");
+		Properties properties = Properties.parse(cfg, "settings.properties");
 		File file = new File("settings.properties");
 		try {
 			if (!file.exists()) file.createNewFile();

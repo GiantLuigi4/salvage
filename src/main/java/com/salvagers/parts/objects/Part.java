@@ -11,7 +11,6 @@ public abstract class Part {
     public float friction;
     public float size;
     public CollisionShape body = null;
-    public float lastRefresh = 0;
     public RigidBody collisionBody;
     public Vector3f pos = new Vector3f();
     

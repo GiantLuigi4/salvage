@@ -138,6 +138,10 @@ public class Wheel extends Part {
             renderable.color = new Vector3D(255,255,255);
     }
     
+    public Wheel(int seed) {
+        this(1,1,1);
+    }
+    
     @Override
     public void render(MatrixStack stack) {
         stack.rotate(90,1,0,0);

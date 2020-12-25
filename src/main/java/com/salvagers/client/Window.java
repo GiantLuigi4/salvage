@@ -2,6 +2,7 @@ package com.salvagers.client;
 
 import com.bulletphysics.linearmath.Transform;
 import com.salvagers.client.utils.rendering.matrix.MatrixStack;
+import com.salvagers.registries.PartRegistry;
 import com.salvagers.world.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -17,6 +18,7 @@ import java.io.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -73,36 +75,36 @@ public class Window {
 	
 	static void renderCube() {
 		glBegin(GL_QUADS);
-		glColor3f(   0.0f,  0.0f,  0.2f );
-		glVertex3f(  0.5f, -0.5f, -0.5f );
-		glVertex3f( -0.5f, -0.5f, -0.5f );
-		glVertex3f( -0.5f,  0.5f, -0.5f );
-		glVertex3f(  0.5f,  0.5f, -0.5f );
-		glColor3f(   0.0f,  0.0f,  1.0f );
-		glVertex3f(  0.5f, -0.5f,  0.5f );
-		glVertex3f(  0.5f,  0.5f,  0.5f );
-		glVertex3f( -0.5f,  0.5f,  0.5f );
-		glVertex3f( -0.5f, -0.5f,  0.5f );
-		glColor3f(   1.0f,  0.0f,  0.0f );
-		glVertex3f(  0.5f, -0.5f, -0.5f );
-		glVertex3f(  0.5f,  0.5f, -0.5f );
-		glVertex3f(  0.5f,  0.5f,  0.5f );
-		glVertex3f(  0.5f, -0.5f,  0.5f );
-		glColor3f(   0.2f,  0.0f,  0.0f );
-		glVertex3f( -0.5f, -0.5f,  0.5f );
-		glVertex3f( -0.5f,  0.5f,  0.5f );
-		glVertex3f( -0.5f,  0.5f, -0.5f );
-		glVertex3f( -0.5f, -0.5f, -0.5f );
-		glColor3f(   0.0f,  1.0f,  0.0f );
-		glVertex3f(  0.5f,  0.5f,  0.5f );
-		glVertex3f(  0.5f,  0.5f, -0.5f );
-		glVertex3f( -0.5f,  0.5f, -0.5f );
-		glVertex3f( -0.5f,  0.5f,  0.5f );
-		glColor3f(   0.0f,  0.2f,  0.0f );
-		glVertex3f(  0.5f, -0.5f, -0.5f );
-		glVertex3f(  0.5f, -0.5f,  0.5f );
-		glVertex3f( -0.5f, -0.5f,  0.5f );
-		glVertex3f( -0.5f, -0.5f, -0.5f );
+		glColor3f(0.0f, 0.0f, 0.2f);
+		glVertex3f(0.5f, -0.5f, -0.5f);
+		glVertex3f(-0.5f, -0.5f, -0.5f);
+		glVertex3f(-0.5f, 0.5f, -0.5f);
+		glVertex3f(0.5f, 0.5f, -0.5f);
+		glColor3f(0.0f, 0.0f, 1.0f);
+		glVertex3f(0.5f, -0.5f, 0.5f);
+		glVertex3f(0.5f, 0.5f, 0.5f);
+		glVertex3f(-0.5f, 0.5f, 0.5f);
+		glVertex3f(-0.5f, -0.5f, 0.5f);
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(0.5f, -0.5f, -0.5f);
+		glVertex3f(0.5f, 0.5f, -0.5f);
+		glVertex3f(0.5f, 0.5f, 0.5f);
+		glVertex3f(0.5f, -0.5f, 0.5f);
+		glColor3f(0.2f, 0.0f, 0.0f);
+		glVertex3f(-0.5f, -0.5f, 0.5f);
+		glVertex3f(-0.5f, 0.5f, 0.5f);
+		glVertex3f(-0.5f, 0.5f, -0.5f);
+		glVertex3f(-0.5f, -0.5f, -0.5f);
+		glColor3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(0.5f, 0.5f, 0.5f);
+		glVertex3f(0.5f, 0.5f, -0.5f);
+		glVertex3f(-0.5f, 0.5f, -0.5f);
+		glVertex3f(-0.5f, 0.5f, 0.5f);
+		glColor3f(0.0f, 0.2f, 0.0f);
+		glVertex3f(0.5f, -0.5f, -0.5f);
+		glVertex3f(0.5f, -0.5f, 0.5f);
+		glVertex3f(-0.5f, -0.5f, 0.5f);
+		glVertex3f(-0.5f, -0.5f, -0.5f);
 		glEnd();
 	}
 	
@@ -113,6 +115,17 @@ public class Window {
 		
 		int rotation = 0;
 		
+		Thread partAddListener = new Thread(()->{
+			while (!glfwWindowShouldClose(window)) {
+				Scanner scanner = new Scanner(System.in);
+				try {
+					if (scanner.hasNext())
+						world.addPart(PartRegistry.registry.get(scanner.nextLine()).apply(0).setDefaultPos(-camPos.x,-camPos.y,-camPos.z));
+				} catch (Throwable ignored) {
+				}
+			}
+		});
+		partAddListener.start();
 		
 		while (!glfwWindowShouldClose(window)) {
 			MatrixStack stack = new MatrixStack();
@@ -120,7 +133,7 @@ public class Window {
 			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
-			render(rotation,stack);
+			render(rotation, stack);
 			
 			glfwSwapBuffers(window);
 			
@@ -131,13 +144,13 @@ public class Window {
 	public static void setupView(MatrixStack stack, float rotation) {
 		int[] sizeX = new int[1];
 		int[] sizeY = new int[1];
-		glfwGetWindowSize(window,sizeX, sizeY);
+		glfwGetWindowSize(window, sizeX, sizeY);
 		int width = sizeX[0];
 		int height = sizeY[0];
 		glViewport(0, 0, width, height);
 		
 		projMatrix.setPerspective((float) Math.toRadians(40),
-				(float)width/height, 0.01f, 100.0f);
+				(float) width / height, 0.01f, 100.0f);
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(projMatrix.get(fb));
 		
@@ -149,28 +162,26 @@ public class Window {
 		glMatrixMode(GL_MODELVIEW);
 		
 		GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
+		
 		if (focus) {
 			double[] cursorX = new double[1];
 			double[] cursorY = new double[1];
-			glfwGetCursorPos(window,cursorX,cursorY);
-			rotationX += ((cursorX[0]-(int)(width/2f))/(256f-configs.sensitivityX));
-			rotationY += ((cursorY[0]-(int)(height/2f))/(256f-configs.sensitivityY));
+			glfwGetCursorPos(window, cursorX, cursorY);
+			rotationX += ((cursorX[0] - (int) (width / 2f)) / (256f - configs.sensitivityX));
+			rotationY += ((cursorY[0] - (int) (height / 2f)) / (256f - configs.sensitivityY));
 			
-			System.out.println(configs.sensitivityX);
-			
-			rotationY = Math.max(-90,Math.min(rotationY,90));
+			rotationY = Math.max(-90, Math.min(rotationY, 90));
 			
 			int[] posX = new int[1];
 			int[] posY = new int[1];
-			glfwGetWindowPos(window,posX,posY);
-			r.mouseMove(posX[0]+width/2,posY[0]+height/2);
+			glfwGetWindowPos(window, posX, posY);
+			r.mouseMove(posX[0] + width / 2, posY[0] + height / 2);
 			r.waitForIdle();
 		}
 		
-		stack.rotate(rotationY,1,0,0);
-		stack.rotate(rotationX,0,1,0);
-		stack.translate(camPos.x,camPos.y,camPos.z);
+		stack.rotate(rotationY, 1, 0, 0);
+		stack.rotate(rotationX, 0, 1, 0);
+		stack.translate(camPos.x, camPos.y, camPos.z);
 	}
 	
 	public static void render(float rotation, MatrixStack stack) {
@@ -232,50 +243,45 @@ public class Window {
 //				stack.pop();
 //			}
 //		}
-		
+
 //		Wheel wheel = new Wheel(1,1,3);
 //		stack.translate(10,0,0);
 //		wheel.render(stack);
 		
 		if (keysDown.contains(GLFW_KEY_W))
-			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180)), 0,(float) -Math.cos(Math.toRadians(rotationX+180))));
+			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180))));
 		if (keysDown.contains(GLFW_KEY_S))
-			camPos.sub(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180)), 0,(float) -Math.cos(Math.toRadians(rotationX+180))));
+			camPos.sub(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180))));
 		if (keysDown.contains(GLFW_KEY_D))
-			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180+90)), 0,(float) -Math.cos(Math.toRadians(rotationX+180+90))));
+			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180 + 90)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180 + 90))));
 		if (keysDown.contains(GLFW_KEY_A))
-			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX+180-90)), 0,(float) -Math.cos(Math.toRadians(rotationX+180-90))));
-		if (keysDown.contains(GLFW_KEY_SPACE))
-			camPos.sub(new Vector3f(0,-1,0));
+			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180 - 90)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180 - 90))));
 		if (keysDown.contains(GLFW_KEY_C))
-			camPos.sub(new Vector3f(0,1,0));
+			camPos.sub(new Vector3f(0, -0.1f, 0));
+		if (keysDown.contains(GLFW_KEY_SPACE))
+			camPos.sub(new Vector3f(0, 0.1f, 0));
 		
 //		stack.translate(camPos.getX(),camPos.getY(),camPos.getZ());
 		
-		world.parts.forEach(part->{
-			stack.push();
-			Transform transform = part.collisionBody.getWorldTransform(new com.bulletphysics.linearmath.Transform());
-			float interpRate = part.lastRefresh-(int)part.lastRefresh;
-//			javax.vecmath.Vector3f pos = new javax.vecmath.Vector3f();
-			javax.vecmath.Vector3f pos = transform.origin;
-//			transform.getMatrix(new javax.vecmath.Matrix4f()).transform(pos);
-			Quat4f rotationQT = transform.getRotation(new Quat4f());
-//			Quaternion.Slerp(part.lastRotation,transform.getOrientation(),interpRate,rotationQT);
-			stack.translate(pos.x,pos.y,pos.z);
-			if (rotationQT != null) {
-				stack.rotate(rotationQT);
-			}
-			part.render(stack);
-			stack.pop();
-//			part.lastPosition = pos;
-//			part.lastRotation = rotationQT;
-		});
+		try {
+			world.parts.forEach(part -> {
+				stack.push();
+				Transform transform = part.collisionBody.getWorldTransform(new com.bulletphysics.linearmath.Transform());
+				javax.vecmath.Vector3f pos = transform.origin;
+				Quat4f rotationQT = transform.getRotation(new Quat4f());
+				stack.translate(pos.x, pos.y, pos.z);
+				if (rotationQT != null) stack.rotate(rotationQT);
+				part.render(stack);
+				stack.pop();
+			});
+		} catch (Throwable ignored) {
+		}
 		world.tick();
 	}
 	
 	public static void clone(String resourceName) throws IOException {
 		InputStream stream = Window.class.getClassLoader().getResourceAsStream("lwjgl.dll");
-		File f = new File("libs/"+resourceName);
+		File f = new File("libs/" + resourceName);
 		if (!f.exists()) {
 			f.createNewFile();
 		}
@@ -285,8 +291,7 @@ public class Window {
 	public static void init() {
 		GLFWErrorCallback.createPrint(System.err).set();
 		
-		if ( !glfwInit() )
-			throw new IllegalStateException("Unable to initialize GLFW");
+		if (!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
 		
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
@@ -294,27 +299,24 @@ public class Window {
 		glfwWindowHint(GLFW_CENTER_CURSOR, GLFW_TRUE);
 		
 		window = glfwCreateWindow(1000, 1000, "Hello World!", NULL, NULL);
-		if ( window == NULL )
+		if (window == NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
 		
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
 				glfwSetWindowShouldClose(window, true);
 //			if ( key == GLFW_KEY_W )
 			if (action == GLFW_PRESS) {
 				keysDown.add(key);
 			} else if (action == GLFW_RELEASE) {
-				keysDown.remove((Object)key);
+				keysDown.remove((Object) key);
 			}
 		});
-		glfwSetWindowFocusCallback(window, new GLFWWindowFocusCallback() {
-			@Override
-			public void invoke(long window, boolean focused) {
-				focus = focused;
-			}
+		glfwSetWindowFocusCallback(window, (window, focused) -> {
+			focus = focused;
 		});
 		
-		try ( MemoryStack stack = stackPush() ) {
+		try (MemoryStack stack = stackPush()) {
 			IntBuffer pWidth = stack.mallocInt(1);
 			IntBuffer pHeight = stack.mallocInt(1);
 			
