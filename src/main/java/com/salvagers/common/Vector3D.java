@@ -4,12 +4,18 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Vector3D {
-	public double x,y,z;
+	public double x, y, z;
 	
 	public Vector3D(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+	}
+	
+	public Vector3D(Vector3f vector) {
+		this.x = vector.x;
+		this.y = vector.y;
+		this.z = vector.z;
 	}
 	
 	public Vector3D(double angleX, double angleY) {
@@ -27,8 +33,18 @@ public class Vector3D {
 		this.z = -sinPitch;
 	}
 	
+	public Vector3D(javax.vecmath.Vector3f vector) {
+		this.x = vector.x;
+		this.y = vector.y;
+		this.z = vector.z;
+	}
+	
 	public Vector3f toVector3() {
 		return new Vector3f((float) x, (float) y, (float) z);
+	}
+	
+	public javax.vecmath.Vector3f toVector3Javax() {
+		return new javax.vecmath.Vector3f((float) x, (float) y, (float) z);
 	}
 	
 	public Vector3D getTransformedInstance(Matrix4f matrix4f) {
@@ -46,9 +62,21 @@ public class Vector3D {
 	
 	public Vector3D subtract(Vector3D other) {
 		return new Vector3D(
-				this.x-other.x,
-				this.y-other.y,
-				this.z-other.z
+				this.x - other.x,
+				this.y - other.y,
+				this.z - other.z
 		);
+	}
+	
+	public Vector3D add(Vector3D other) {
+		return this.subtract(other.scale(-1));
+	}
+	
+	private Vector3D scale(int i) {
+		return new Vector3D(x * i, y * i, z * i);
+	}
+	
+	public Vector3D abs() {
+		return new Vector3D(Math.abs(x), Math.abs(y), Math.abs(z));
 	}
 }

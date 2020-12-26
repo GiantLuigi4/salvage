@@ -15,13 +15,14 @@ public class Wheel extends Part {
     
     /**
      * Constructs a wheel
-     * @param weight the weight of the wheel (0 for if it should be immovable)
+     *
+     * @param weight   the weight of the wheel (0 for if it should be immovable)
      * @param friction the friction of the wheel
-     * @param size the size of the wheel (NYI)
+     * @param size     the size of the wheel (NYI)
      */
     public Wheel(float weight, float friction, float size) {
         super(weight, friction, size);
-        this.body = Shapes.getCylinder(1,0.2f);
+        this.body = Shapes.getCylinder(1, 0.2f);
         
         ArrayList<Renderable> renderablesArrayList = new ArrayList<>();
         
@@ -40,94 +41,94 @@ public class Wheel extends Part {
                     new Vector3D(cos1, sin1, -0.1f),
                     new Vector3D(cos, sin, -0.1f),
                     "assets/salvagers/textures/tire_temp.png",
-                    new Vector3D(1f/16,0,0),
-                    new Vector3D(1f/16,1,0),
-                    new Vector3D(3f/16,1,0),
-                    new Vector3D(3f/16,0,0)
+                    new Vector3D(1f / 16, 0, 0),
+                    new Vector3D(1f / 16, 1, 0),
+                    new Vector3D(3f / 16, 1, 0),
+                    new Vector3D(3f / 16, 0, 0)
             );
             renderablesArrayList.add(line);
             line = new TexturedRectangle(stack.getLast(),
                     new Vector3D(cos, sin, -0.1f),
                     new Vector3D(cos1, sin1, -0.1f),
-                    new Vector3D(cos1*0.9f, sin1*0.9f, -0.15f),
-                    new Vector3D(cos*0.9f, sin*0.9f, -0.15f),
+                    new Vector3D(cos1 * 0.9f, sin1 * 0.9f, -0.15f),
+                    new Vector3D(cos * 0.9f, sin * 0.9f, -0.15f),
                     "assets/salvagers/textures/tire_temp.png",
-                    new Vector3D(0f/16,0,0),
-                    new Vector3D(0f/16,1,0),
-                    new Vector3D(1f/16,1,0),
-                    new Vector3D(1f/16,0,0)
+                    new Vector3D(0f / 16, 0, 0),
+                    new Vector3D(0f / 16, 1, 0),
+                    new Vector3D(1f / 16, 1, 0),
+                    new Vector3D(1f / 16, 0, 0)
             );
             renderablesArrayList.add(line);
             line = new TexturedRectangle(stack.getLast(),
-                    new Vector3D(cos*0.9f, sin*0.9f, -0.15f),
-                    new Vector3D(cos1*0.9f, sin1*0.9f, -0.15f),
-                    new Vector3D(cos1*0.7f, sin1*0.7f, -0.15f),
-                    new Vector3D(cos*0.7f, sin*0.7f, -0.15f),
+                    new Vector3D(cos * 0.9f, sin * 0.9f, -0.15f),
+                    new Vector3D(cos1 * 0.9f, sin1 * 0.9f, -0.15f),
+                    new Vector3D(cos1 * 0.7f, sin1 * 0.7f, -0.15f),
+                    new Vector3D(cos * 0.7f, sin * 0.7f, -0.15f),
                     "assets/salvagers/textures/tire_temp.png",
-                    new Vector3D(1f/16,0,0),
-                    new Vector3D(1f/16,1,0),
-                    new Vector3D(3f/16,1,0),
-                    new Vector3D(3f/16,0,0)
+                    new Vector3D(1f / 16, 0, 0),
+                    new Vector3D(1f / 16, 1, 0),
+                    new Vector3D(3f / 16, 1, 0),
+                    new Vector3D(3f / 16, 0, 0)
             );
             renderablesArrayList.add(line);
             line = new TexturedRectangle(stack.getLast(),
-                    new Vector3D(cos*0.7f, sin*0.7f, -0.15f),
-                    new Vector3D(cos1*0.7f, sin1*0.7f, -0.15f),
-                    new Vector3D(cos1*0.6f, sin1*0.6f, -0.1f),
-                    new Vector3D(cos*0.6f, sin*0.6f, -0.1f),
+                    new Vector3D(cos * 0.7f, sin * 0.7f, -0.15f),
+                    new Vector3D(cos1 * 0.7f, sin1 * 0.7f, -0.15f),
+                    new Vector3D(cos1 * 0.6f, sin1 * 0.6f, -0.1f),
+                    new Vector3D(cos * 0.6f, sin * 0.6f, -0.1f),
                     "assets/salvagers/textures/tire_temp.png",
-                    new Vector3D(3f/16,0,0),
-                    new Vector3D(3f/16,1,0),
-                    new Vector3D(4f/16,1,0),
-                    new Vector3D(4f/16,0,0)
+                    new Vector3D(3f / 16, 0, 0),
+                    new Vector3D(3f / 16, 1, 0),
+                    new Vector3D(4f / 16, 1, 0),
+                    new Vector3D(4f / 16, 0, 0)
             );
             renderablesArrayList.add(line);
             line = new TexturedRectangle(stack.getLast(),
-                    new Vector3D(cos1*0.6f, sin1*0.6f, 0.1f),
-                    new Vector3D(cos*0.6f, sin*0.6f, 0.1f),
-                    new Vector3D(cos*0.6f, sin*0.6f, -0.1f),
-                    new Vector3D(cos1*0.6f, sin1*0.6f, -0.1f),
+                    new Vector3D(cos1 * 0.6f, sin1 * 0.6f, 0.1f),
+                    new Vector3D(cos * 0.6f, sin * 0.6f, 0.1f),
+                    new Vector3D(cos * 0.6f, sin * 0.6f, -0.1f),
+                    new Vector3D(cos1 * 0.6f, sin1 * 0.6f, -0.1f),
                     "assets/salvagers/textures/tire_temp.png",
-                    new Vector3D(1f/16,0,0),
-                    new Vector3D(1f/16,1,0),
-                    new Vector3D(3f/16,1,0),
-                    new Vector3D(3f/16,0,0)
+                    new Vector3D(1f / 16, 0, 0),
+                    new Vector3D(1f / 16, 1, 0),
+                    new Vector3D(3f / 16, 1, 0),
+                    new Vector3D(3f / 16, 0, 0)
             );
             renderablesArrayList.add(line);
             line = new TexturedRectangle(stack.getLast(),
-                    new Vector3D(cos1*0.7f, sin1*0.7f, 0.15f),
-                    new Vector3D(cos*0.7f, sin*0.7f, 0.15f),
-                    new Vector3D(cos*0.6f, sin*0.6f, 0.1f),
-                    new Vector3D(cos1*0.6f, sin1*0.6f, 0.1f),
+                    new Vector3D(cos1 * 0.7f, sin1 * 0.7f, 0.15f),
+                    new Vector3D(cos * 0.7f, sin * 0.7f, 0.15f),
+                    new Vector3D(cos * 0.6f, sin * 0.6f, 0.1f),
+                    new Vector3D(cos1 * 0.6f, sin1 * 0.6f, 0.1f),
                     "assets/salvagers/textures/tire_temp.png",
-                    new Vector3D(3f/16,0,0),
-                    new Vector3D(3f/16,1,0),
-                    new Vector3D(4f/16,1,0),
-                    new Vector3D(4f/16,0,0)
+                    new Vector3D(3f / 16, 0, 0),
+                    new Vector3D(3f / 16, 1, 0),
+                    new Vector3D(4f / 16, 1, 0),
+                    new Vector3D(4f / 16, 0, 0)
             );
             renderablesArrayList.add(line);
             line = new TexturedRectangle(stack.getLast(),
-                    new Vector3D(cos1*0.9f, sin1*0.9f, 0.15f),
-                    new Vector3D(cos*0.9f, sin*0.9f, 0.15f),
-                    new Vector3D(cos*0.7f, sin*0.7f, 0.15f),
-                    new Vector3D(cos1*0.7f, sin1*0.7f, 0.15f),
+                    new Vector3D(cos1 * 0.9f, sin1 * 0.9f, 0.15f),
+                    new Vector3D(cos * 0.9f, sin * 0.9f, 0.15f),
+                    new Vector3D(cos * 0.7f, sin * 0.7f, 0.15f),
+                    new Vector3D(cos1 * 0.7f, sin1 * 0.7f, 0.15f),
                     "assets/salvagers/textures/tire_temp.png",
-                    new Vector3D(1f/16,0,0),
-                    new Vector3D(1f/16,1,0),
-                    new Vector3D(3f/16,1,0),
-                    new Vector3D(3f/16,0,0)
+                    new Vector3D(1f / 16, 0, 0),
+                    new Vector3D(1f / 16, 1, 0),
+                    new Vector3D(3f / 16, 1, 0),
+                    new Vector3D(3f / 16, 0, 0)
             );
             renderablesArrayList.add(line);
             line = new TexturedRectangle(stack.getLast(),
                     new Vector3D(cos1, sin1, 0.1f),
                     new Vector3D(cos, sin, 0.1f),
-                    new Vector3D(cos*0.9f, sin*0.9f, 0.15f),
-                    new Vector3D(cos1*0.9f, sin1*0.9f, 0.15f),
+                    new Vector3D(cos * 0.9f, sin * 0.9f, 0.15f),
+                    new Vector3D(cos1 * 0.9f, sin1 * 0.9f, 0.15f),
                     "assets/salvagers/textures/tire_temp.png",
-                    new Vector3D(0f/16,0,0),
-                    new Vector3D(0f/16,1,0),
-                    new Vector3D(1f/16,1,0),
-                    new Vector3D(1f/16,0,0)
+                    new Vector3D(0f / 16, 0, 0),
+                    new Vector3D(0f / 16, 1, 0),
+                    new Vector3D(1f / 16, 1, 0),
+                    new Vector3D(1f / 16, 0, 0)
             );
             renderablesArrayList.add(line);
         }
@@ -135,16 +136,16 @@ public class Wheel extends Part {
         renderables = renderablesArrayList.toArray(new Renderable[0]);
     
         for (Renderable renderable : renderables)
-            renderable.color = new Vector3D(255,255,255);
+            renderable.color = new Vector3D(255, 255, 255);
     }
     
     public Wheel(int seed) {
-        this(1,1,1);
+        this(1, 1, 1);
     }
     
     @Override
     public void render(MatrixStack stack) {
-        stack.rotate(90,1,0,0);
+        stack.rotate(90, 1, 0, 0);
         RenderHelper.draw(
                 new RenderableCollection(
                         stack.getLast(),

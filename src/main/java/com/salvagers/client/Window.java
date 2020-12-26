@@ -1,14 +1,21 @@
 package com.salvagers.client;
 
 import com.bulletphysics.linearmath.Transform;
+import com.salvagers.client.utils.rendering.RenderHelper;
 import com.salvagers.client.utils.rendering.matrix.MatrixStack;
+import com.salvagers.client.utils.rendering.renderables.TexturedTriangle;
+import com.salvagers.common.Vector3D;
+import com.salvagers.common.shapes.Triangle;
+import com.salvagers.common.terrain.TerrainGen;
 import com.salvagers.registries.PartRegistry;
 import com.salvagers.world.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
-import org.lwjgl.glfw.*;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
@@ -35,6 +42,8 @@ public class Window {
 	
 	//TODO: switch this to lwjgl's cursor stuff
 	private static final Robot r;
+	
+	public static final TerrainGen terrainGen = new TerrainGen(10432);
 	
 	public static final World world = new World();
 	
@@ -137,7 +146,10 @@ public class Window {
 			
 			glfwSwapBuffers(window);
 			
-			glfwPollEvents();
+			try {
+				glfwPollEvents();
+			} catch (Throwable ignored) {
+			}
 		}
 	}
 	
@@ -179,6 +191,7 @@ public class Window {
 			r.waitForIdle();
 		}
 		
+		stack.translate(0, 0, 1);
 		stack.rotate(rotationY, 1, 0, 0);
 		stack.rotate(rotationX, 0, 1, 0);
 		stack.translate(camPos.x, camPos.y, camPos.z);
@@ -249,19 +262,58 @@ public class Window {
 //		wheel.render(stack);
 		
 		if (keysDown.contains(GLFW_KEY_W))
-			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180))));
+			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180))).mul(configs.camMovementSpeed));
 		if (keysDown.contains(GLFW_KEY_S))
-			camPos.sub(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180))));
+			camPos.sub(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180))).mul(configs.camMovementSpeed));
 		if (keysDown.contains(GLFW_KEY_D))
-			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180 + 90)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180 + 90))));
+			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180 + 90)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180 + 90))).mul(configs.camMovementSpeed));
 		if (keysDown.contains(GLFW_KEY_A))
-			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180 - 90)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180 - 90))));
+			camPos.add(new Vector3f((float) Math.sin(Math.toRadians(rotationX + 180 - 90)), 0, (float) -Math.cos(Math.toRadians(rotationX + 180 - 90))).mul(configs.camMovementSpeed));
 		if (keysDown.contains(GLFW_KEY_C))
-			camPos.sub(new Vector3f(0, -0.1f, 0));
+			camPos.sub(new Vector3f(0, -configs.camMovementSpeed, 0));
 		if (keysDown.contains(GLFW_KEY_SPACE))
-			camPos.sub(new Vector3f(0, 0.1f, 0));
-		
+			camPos.sub(new Vector3f(0, configs.camMovementSpeed, 0));
+
 //		stack.translate(camPos.getX(),camPos.getY(),camPos.getZ());
+		
+		boolean alternator = false;
+
+//		CompoundShape shape = (CompoundShape) Shapes.createComplex(
+//				ListHelper.toVector3fArrayArray(terrainGen.getTriangles(-64,-64,128,128))
+//		);
+//		RenderableMesh mesh = new RenderableMesh(stack.getLast(),Arrays.asList(shape.getChildList().toArray(new javax.vecmath.Vector3f[0])),true);
+//		RenderableMesh mesh = new RenderableMesh(stack.getLast());
+//		shape.getChildList().forEach(shape1->{
+//			if (shape1.childShape instanceof TriangleShape) {
+//				mesh.vector3DS.add(new Vector3D(((TriangleShape) shape1.childShape).vertices1[0]));
+//				mesh.vector3DS.add(new Vector3D(((TriangleShape) shape1.childShape).vertices1[1]));
+//				mesh.vector3DS.add(new Vector3D(((TriangleShape) shape1.childShape).vertices1[2]));
+//				mesh.vector3DS.add(new Vector3D(((TriangleShape) shape1.childShape).vertices1[0]));
+//			}
+//		});
+//		RenderHelper.drawColor(mesh,1,1,1,1);
+		
+		for (Triangle triangle : terrainGen.getTriangles(-16, -16, 32, 32)) {
+			stack.push();
+			stack.translate(triangle.getMinVector().x, triangle.getMinVector().y, triangle.getMinVector().z);
+			TexturedTriangle triangle1;
+			if (alternator) {
+				triangle1 = new TexturedTriangle(stack.getLast(), triangle.moveTo0(), "assets/salvagers/textures/wood_temp.png",
+						new Vector3D(0, 0, 0),
+						new Vector3D(1, 0, 0),
+						new Vector3D(1, 1, 0)
+				);
+			} else {
+				triangle1 = new TexturedTriangle(stack.getLast(), triangle.moveTo0(), "assets/salvagers/textures/wood_temp.png",
+						new Vector3D(1, 1, 0),
+						new Vector3D(0, 1, 0),
+						new Vector3D(0, 0, 0)
+				);
+			}
+			alternator = !alternator;
+			RenderHelper.drawColor(triangle1, 1, 1, 1, 1);
+			stack.pop();
+		}
 		
 		try {
 			world.parts.forEach(part -> {

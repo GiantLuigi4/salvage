@@ -14,15 +14,15 @@ public class MatrixStack {
 	}
 	
 	public void moveTo(double x, double y, double z) {
-		current.translation((float)x,(float)y,(float)z);
+		current.translation((float) x, (float) y, (float) z);
 	}
 	
 	public void translate(double x, double y, double z) {
-		current.translate((float)x,(float)y,(float)z);
+		current.translate((float) x, (float) y, (float) z);
 	}
 	
 	public void rotate(double angle, double x, double y, double z) {
-		current.rotate((float)Math.toRadians(angle),(float)x,(float)y,(float)z);
+		current.rotate((float) Math.toRadians(angle), (float) x, (float) y, (float) z);
 	}
 	
 	public void rotate(Quat4f qt) {
@@ -45,11 +45,11 @@ public class MatrixStack {
 	}
 	
 	public void pop() {
-		current = entries.remove(entries.size()-1);
+		current = entries.remove(entries.size() - 1);
 	}
 	
 	public void scale(double x, double y, double z) {
-		current.scale((float)x,(float)y,(float)z);
+		current.scale((float) x, (float) y, (float) z);
 	}
 	
 	public Matrix4f getLast() {

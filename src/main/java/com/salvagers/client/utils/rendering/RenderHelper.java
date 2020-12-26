@@ -43,11 +43,33 @@ public class RenderHelper {
 			normal.z = (u.x * v.y) - (u.y * v.x);
 			
 			double val = normal.toVector3().absolute().mul(-1).dot(new Vector3f(0, 1, 1).normalize());
-			if (Double.isNaN(val)) {
+			if (Double.isNaN(val))
 				val = 1;
-			}
 			val = val % 1;
 			val = ((val / 2f) - 0.5f) % 1.01f;
+			val = Math.abs(val);
+			glColor4f(r * (float) val, g * (float) val, b * (float) val, a);
+		} else if (renderable instanceof RenderableTriangle) {
+			Vector3D corner1 = ((RenderableTriangle) renderable).corner1.getTransformedInstance(renderable.matrix);
+			Vector3D corner2 = ((RenderableTriangle) renderable).corner2.getTransformedInstance(renderable.matrix);
+			Vector3D corner3 = ((RenderableTriangle) renderable).corner3.getTransformedInstance(renderable.matrix);
+			
+			//https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
+			Vector3D u = corner1.subtract(corner2);
+			Vector3D v = corner1.subtract(corner3);
+			
+			Vector3D normal = new Vector3D(0, 0, 0);
+			normal.x = (u.y * v.z) - (u.z * v.y);
+			normal.y = (u.z * v.x) - (u.x * v.z);
+			normal.z = (u.x * v.y) - (u.y * v.x);
+			
+			normal = new Vector3D(normal.toVector3().normalize());
+			
+			double val = normal.toVector3().absolute().mul(-1).dot(new Vector3f(0, 1, 1).normalize());
+			if (Double.isNaN(val))
+				val = 1;
+			val = val % 1;
+			val = ((val / 4f) + 0.9f) % 1;
 			val = Math.abs(val);
 			glColor4f(r * (float) val, g * (float) val, b * (float) val, a);
 		} else {
@@ -99,6 +121,26 @@ public class RenderHelper {
 			glEnd();
 			if (renderable instanceof TexturedRectangle)
 				glDisable(GL_TEXTURE_2D);
+		} else if (renderable instanceof RenderableTriangle) {
+			if (renderable instanceof TexturedTriangle) {
+				glEnable(GL_TEXTURE_2D);
+				glBindTexture(GL11.GL_TEXTURE_2D, Storage.getOrGenerate(((TexturedTriangle) renderable).texture));
+			}
+			glBegin(GL_POLYGON);
+			if (renderable instanceof TexturedTriangle) {
+				glTexCoord3d(((TexturedTriangle) renderable).tex1.x, ((TexturedTriangle) renderable).tex1.y, ((TexturedTriangle) renderable).tex1.z);
+				glVertex3d(((RenderableTriangle) renderable).corner1.x, ((RenderableTriangle) renderable).corner1.y, ((RenderableTriangle) renderable).corner1.z);
+				glTexCoord3d(((TexturedTriangle) renderable).tex2.x, ((TexturedTriangle) renderable).tex2.y, ((TexturedTriangle) renderable).tex2.z);
+				glVertex3d(((RenderableTriangle) renderable).corner2.x, ((RenderableTriangle) renderable).corner2.y, ((RenderableTriangle) renderable).corner2.z);
+				glTexCoord3d(((TexturedTriangle) renderable).tex3.x, ((TexturedTriangle) renderable).tex3.y, ((TexturedTriangle) renderable).tex3.z);
+			} else {
+				glVertex3d(((RenderableTriangle) renderable).corner1.x, ((RenderableTriangle) renderable).corner1.y, ((RenderableTriangle) renderable).corner1.z);
+				glVertex3d(((RenderableTriangle) renderable).corner2.x, ((RenderableTriangle) renderable).corner2.y, ((RenderableTriangle) renderable).corner2.z);
+			}
+			glVertex3d(((RenderableTriangle) renderable).corner3.x, ((RenderableTriangle) renderable).corner3.y, ((RenderableTriangle) renderable).corner3.z);
+			glEnd();
+			if (renderable instanceof TexturedTriangle)
+				glDisable(GL_TEXTURE_2D);
 		} else if (renderable instanceof RenderableCollection) {
 			if (((RenderableCollection) renderable).useChildTransforms)
 				for (Renderable renderable1 : ((RenderableCollection) renderable).renderables) {
@@ -112,6 +154,17 @@ public class RenderHelper {
 						drawColorWithoutSetup(renderable1, (float) renderable1.color.x / 255f, (float) renderable1.color.y / 255f, (float) renderable1.color.z / 255f, 1, true);
 					else drawWithoutSetup(renderable1, true);
 				}
+		} else if (renderable instanceof RenderableMesh) {
+			glBegin(GL_POLYGON);
+			for (Vector3D vector : ((RenderableMesh) renderable).vector3DS) {
+				glColor3f(
+						((float) (vector.x) % 128),
+						((float) (vector.y) % 128),
+						((float) (vector.z) % 128)
+				);
+				glVertex3d(vector.x, vector.y, vector.z);
+			}
+			glEnd();
 		}
 		if (!isMatrixSet)
 			glPopMatrix();

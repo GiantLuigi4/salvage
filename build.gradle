@@ -10,6 +10,7 @@ repositories {
     mavenCentral()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url 'https://jitpack.io' }
+    maven { url 'https://modmaven.k-4u.nl/' }
 }
 
 project.ext.lwjglVersion = "3.2.4-SNAPSHOT"
@@ -52,6 +53,9 @@ dependencies {
 
     implementation "org.lwjgl:lwjgl-shaderc"
     runtimeOnly "org.lwjgl:lwjgl-shaderc::$lwjglNatives"
+
+    implementation "net.rgsw:noise:1.0.4"
+    runtimeOnly "net.rgsw:noise:1.0.4"
 
 //    implementation "org.lwjgl:lwjgl-bullet"
 //    runtimeOnly "org.lwjgl:lwjgl-bullet::$lwjglNatives"

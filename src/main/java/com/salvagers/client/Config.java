@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 public class Config {
 	public float sensitivityX = 32;
 	public float sensitivityY = 32;
+	public float camMovementSpeed = 0.5f;
 	
 	public static Config parse() {
 		Config cfg = new Config();
